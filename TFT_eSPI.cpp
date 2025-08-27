@@ -164,21 +164,11 @@ inline void TFT_eSPI::end_tft_read(void){
   }
 #else
   #if !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
-    spi.setFrequency(SPI_FREQUENCY);
+    spi.setFrequency(spi_write_speed * 1000000);
   #endif
    if(!inTransaction) {CS_H;}
 #endif
   SET_BUS_WRITE_MODE;
-}
-
-/***************************************************************************************
-** Function name:           setSPISpeed
-** Description:             Set SPI speed
-***************************************************************************************/
-void TFT_eSPI::setSPISpeed(uint8_t speed)
-{
-  if(speed > 0 && speed < 80)
-    spi_write_speed = speed;
 }
 
 /***************************************************************************************
@@ -271,6 +261,16 @@ bool TFT_eSPI::checkViewport(int32_t x, int32_t y, int32_t w, int32_t h)
   if (dw < 1 || dh < 1) return false;
 
   return true;
+}
+
+/***************************************************************************************
+** Function name:           setSPISpeed
+** Description:             Set SPI speed
+***************************************************************************************/
+void TFT_eSPI::setSPISpeed(uint8_t speed)
+{
+  if(speed > 0 && speed < 80)
+    spi_write_speed = speed;
 }
 
 /***************************************************************************************
@@ -480,8 +480,6 @@ TFT_eSPI::TFT_eSPI(int16_t w, int16_t h)
   _cp437    = false;    // Legacy GLCD font bug fix disabled by default
   _utf8     = true;     // UTF8 decoding enabled
 
-  spi_write_speed = SPI_FREQUENCY / 1000000; // Set SPI frequency from user define
-  
 #if defined (FONT_FS_AVAILABLE) && defined (SMOOTH_FONT)
   fs_font  = true;     // Smooth font filing system or array (fs_font = false) flag
 #endif
@@ -6016,7 +6014,7 @@ void TFT_eSPI::getSetup(setup_t &tft_settings)
   tft_settings.tft_spi_freq = 0;
 #else
   tft_settings.serial = true;
-  tft_settings.tft_spi_freq = spi_write_speed;
+  tft_settings.tft_spi_freq = spi_write_speed * 1000000/100000;
   #ifdef SPI_READ_FREQUENCY
     tft_settings.tft_rd_freq = SPI_READ_FREQUENCY/100000;
   #endif

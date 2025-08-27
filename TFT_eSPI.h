@@ -429,6 +429,9 @@ class TFT_eSPI : public Print { friend class TFT_eSprite; // Sprite class has ac
  //--------------------------------------- public ------------------------------------//
  public:
 
+ // Change SPI speed on the fly
+  void     setSPISpeed(uint8_t speed_Mhz);
+  
   TFT_eSPI(int16_t _W = TFT_WIDTH, int16_t _H = TFT_HEIGHT);
 
   // init() and begin() are equivalent, begin() included for backwards compatibility
@@ -715,8 +718,6 @@ class TFT_eSPI : public Print { friend class TFT_eSprite; // Sprite class has ac
   uint16_t readcommand16(uint8_t cmd_function, uint8_t index = 0); // read 16 bits from TFT
   uint32_t readcommand32(uint8_t cmd_function, uint8_t index = 0); // read 32 bits from TFT
 
-  // Change SPI speed on the fly
-  void     setSPISpeed(uint8_t speed_Mhz);
 
   // Colour conversion
            // Convert 8-bit red, green and blue to 16 bits
@@ -907,6 +908,7 @@ class TFT_eSPI : public Print { friend class TFT_eSprite; // Sprite class has ac
  //-------------------------------------- protected ----------------------------------//
  protected:
 
+uint8_t spi_write_speed;  // SPI write speed
   //int32_t  win_xe, win_ye;          // Window end coords - not needed
 
   int32_t  _init_width, _init_height; // Display w/h as input, used by setRotation()
@@ -948,8 +950,6 @@ class TFT_eSPI : public Print { friend class TFT_eSprite; // Sprite class has ac
   uint32_t _lastColor; // Buffered value of last colour used
 
   bool     _fillbg;    // Fill background flag (just for for smooth fonts at the moment)
-  
-  uint8_t spi_write_speed;  // SPI write speed
 
 #if defined (SSD1963_DRIVER)
   uint16_t Cswap;      // Swap buffer for SSD1963
